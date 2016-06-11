@@ -1,17 +1,22 @@
 % function ccc = mfcc(~)
 
-% 归一化mel滤波器组系数
+% MFCC计算:
+% 分帧 -> 预加重 -> 加汉明窗 -> 短时傅里叶变换 -> 得到频谱;
 
 % fs: 采样频率
 [x, fs] = audioread(['SpeechDataset/', sid, '/', sid, '_', word, '_', no, '.wav']);
 
-% melbankm: 
-% melbankm: 最后一个参数，'t'是三角窗,'n'是hanning窗，'m'是hamming窗
+% 产生Mel三角滤波器参数并归一化
 bank = melbankm(24, 256, fs, 0, 0.4, 't');
 bank = full(bank);          % 将稀疏矩阵转换成完整的矩阵
 bank = bank/max(bank(:));   % 归一化
 
+subplot(211)
+plot(bank')
+title('Mel三角滤波器')
+
 % 产生离散余弦变换的参数
+dctcoef = zeros(12,24);
 for k = 1:12
     n = 0:23;
     dctcoef(k, :) = cos((2*n+1)*k*pi/(2*24));
@@ -29,6 +34,7 @@ xx = enframe(xx, 256, 80);
 
 % MFCC计算的核心部分
 % 遍历每帧,计算MFCC参数
+m = zeros(size(xx,1), 12);
 for i = 1:size(xx,1)
     y = xx(i,:);
     s = y'.*hamming(256);
@@ -51,9 +57,9 @@ dtm = dtm/3;
 ccc = [m dtm];
 
 % 去除首位两帧，因为这两帧的一阶差分参数为0
-ccc = ccc(3:size(m,1)-2,:);
+ccc = ccc(3:size(m,1)-2, :);
 
-subplot(211)
+subplot(212)
 ccc_1 = ccc(:,1);
 plot(ccc);
 title('MFCC');
