@@ -14,10 +14,6 @@ bank = melbankm(24, 256, fs, 0, 0.4, 't');
 bank = full(bank);          % 将稀疏矩阵转换成完整的矩阵
 bank = bank/max(bank(:));   % 归一化
 
-subplot(211)
-plot(bank')
-title('Mel三角滤波器')
-
 % 产生离散余弦变换的参数
 dctcoef = zeros(12,24);
 for k = 1:12
@@ -64,8 +60,11 @@ ccc = [m dtm];
 % 去除首位两帧，因为这两帧的一阶差分参数为0
 ccc = ccc(3:size(m,1)-2, :);
 
-subplot(212)
+% subplot(211)
+% plot(bank')
+% title('Mel三角滤波器')
+% subplot(212)
 % ccc_1 = ccc(:,1);
-plot(ccc);
-title('MFCC');
+% plot(ccc);
+% title('MFCC');
 return
