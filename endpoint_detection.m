@@ -1,14 +1,18 @@
 % endpoint_detection: 端点检测
 % author: irmo
 % date: 2016.6
-
+function [x1, x2] = endpoint_detection(f)
 % fs: 采样频率
-[x, fs] = audioread(['SpeechDataset/', sid, '/', sid, '_', word, '_', no, '.wav']);
-soundsc(x, fs); % 播放音频
+
+[x, fs] = audioread(f);
+
+% 播放音频
+soundsc(x, fs);
+xxx=x;
 
 % 小波降噪
-[thr,sorh,keepapp] = ddencmp('den','wv',x(:));
-x = wdencmp('gbl',L2,'coif5',5,thr,'s',keepapp);
+[thr, sorh, keepapp] = ddencmp('den','wv',x(:));
+x = wdencmp('gbl',x,'coif5',5,thr,'s',keepapp);
 N = size(x);
 x = double(x);
 x = x/max(abs(x)); % 归一化
@@ -48,7 +52,6 @@ silence = 0;
 
 % 端点检测
 x1 = 0;
-x2 = 0;
 for n = 1 : length(zcr)
     switch status
         % status = 0, 静音
@@ -94,17 +97,19 @@ result = [x1, x2];
 figure(1);
 
 subplot(311);
-plot(x,'b')
+plot(xxx,'b')
 title('时域波形图')
 hold on
 plot([x1*FrameInc x1*FrameInc], [-1 1], 'r', [x2*FrameInc+FrameLen x2*FrameInc+FrameLen], [-1, 1], 'r');
 
 subplot(312);
 plot(zcr);
-title('过零率')
+title('有效过零率')
 xlabel('֡帧')
 
 subplot(313);
 plot(amp);
 title('短时能量');
 xlabel('帧');
+
+return 

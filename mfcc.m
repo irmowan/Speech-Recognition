@@ -1,10 +1,13 @@
-% function ccc = mfcc(~)
+
+function ccc = mfcc(f)
+% mfcc: 计算语音的 mfcc
+% ccc: 返回的 mfcc 特征，帧数*24维
 
 % MFCC计算:
 % 分帧 -> 预加重 -> 加汉明窗 -> 短时傅里叶变换 -> 得到频谱;
 
 % fs: 采样频率
-[x, fs] = audioread(['SpeechDataset/', sid, '/', sid, '_', word, '_', no, '.wav']);
+[x, fs] = audioread(f);
 
 % 产生Mel三角滤波器参数并归一化
 bank = melbankm(24, 256, fs, 0, 0.4, 't');
@@ -26,6 +29,7 @@ end
 w = 1+6*sin(pi*(1:12)./12);
 w = w/max(w);
 
+
 % 预加重滤波器
 xx = filter([1 -0.9375], 1, double(x));
 
@@ -37,11 +41,12 @@ xx = enframe(xx, 256, 80);
 m = zeros(size(xx,1), 12);
 for i = 1:size(xx,1)
     y = xx(i,:);
-    s = y'.*hamming(256);
-    t = abs(fft(s));
-    t = t.^2;
-    c1= dctcoef*log(bank*t(1:129));
-    c2= c1.*w';
+    s = y'.*hamming(256);           % 加窗
+    t = abs(fft(s));                % 求频谱
+    t = t.^2;                       % 平方得到能量谱
+    c = log(bank*t(1:129));         % 滤波，对滤波器输出取对数得到对数功率谱
+    c1= dctcoef*c;                  % 进行反离散余弦变换
+    c2= c1.*w';                     % 提升窗口
     m(i,:)=c2';
 end
 
@@ -60,8 +65,7 @@ ccc = [m dtm];
 ccc = ccc(3:size(m,1)-2, :);
 
 subplot(212)
-ccc_1 = ccc(:,1);
+% ccc_1 = ccc(:,1);
 plot(ccc);
 title('MFCC');
-
-% return
+return
