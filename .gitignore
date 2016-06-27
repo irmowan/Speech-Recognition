@@ -1,3 +1,4 @@
 .DS_Store
-/SpeechDataset
-
+SpeechDataset/
+results/
+*.m~
