@@ -4,27 +4,25 @@
 clear all;
 clc;
 
-[x, fs] = input_record();
-
-plot(x);
-
-load('codebook.mat', 'code');
-load('words');
-
-[x1, x2] = endpoint_detect(x, fs);
-m = cal_mfcc(x, fs);
-mm = m(max(x1-2,1):min(x2-2,193),:);
-
-dist = ones(1, num_words);
-for j = 1:num_words
-   d = cal_distance(mm', code{j});
-   dist(j) = sum(min(d,[],2)) / size(d,1);
-   fprintf('与单词%6s距离为 %.2f \n', words{j}, dist(j));
-end
-
-[min_d, min_j] = min(dist);
-if min_d < 17
+while true
+    [x, fs] = input_record();
+    
+    plot(x);
+    
+    load('codebook.mat', 'code');
+    load('words');
+    
+    [x1, x2] = endpoint_detect(x, fs);
+    m = cal_mfcc(x, fs);
+    mm = m(max(x1-2,1):min(x2-2,193),:);
+    
+    dist = ones(1, num_words);
+    for j = 1:num_words
+        d = cal_distance(mm', code{j});
+        dist(j) = sum(min(d,[],2)) / size(d,1);
+        fprintf('与单词%6s距离为 %.2f \n', words{j}, dist(j));
+    end
+    
+    [min_d, min_j] = min(dist);
     fprintf('该词可能是: %s.\n', words{min_j});
-else
-    fprintf('该词很可能不在词库中...\n');
 end
