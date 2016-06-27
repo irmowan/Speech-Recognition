@@ -4,3 +4,13 @@ results/
 tests/
 mats/
 *.m~
+
+*.log
+*.aux
+*.out
+*.toc
+*.gz
+*.blg
+*.bbl
+*.fls
+
