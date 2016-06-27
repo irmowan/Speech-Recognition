@@ -1,4 +1,4 @@
-function d = disteu(x, y)
+function d = cal_distance(x, y)
 %% 测距
 [M1, N] = size(x);
 [M2, P] = size(y);

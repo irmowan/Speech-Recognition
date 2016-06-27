@@ -1,4 +1,6 @@
 .DS_Store
 SpeechDataset/
 results/
+tests/
+mats/
 *.m~

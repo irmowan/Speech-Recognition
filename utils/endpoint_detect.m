@@ -1,7 +1,7 @@
 % endpoint_detection: 端点检测
 % author: irmo
 % date: 2016.6
-function [x1, x2] = endpoint_detect(x, fs)
+function [x1, x2] = endpoint_detect(x, ~)
 
 % 播放音频
 % soundsc(x, fs);
@@ -99,7 +99,7 @@ if x2 > length(zcr)
 end
 return
 
-%% 画出波形图、过零率图、短时能量图
+% % 画出波形图、过零率图、短时能量图
 % 
 % figure(1);
 % subplot(311);

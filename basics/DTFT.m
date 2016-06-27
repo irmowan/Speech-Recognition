@@ -26,3 +26,5 @@ bar(z, 0.01);
 subplot(326);
 Z = abs(fft(z));
 bar(Z, 0.001);
+
+saveas(gcf, strcat(pwd,'/results/DTFT'),'jpg');

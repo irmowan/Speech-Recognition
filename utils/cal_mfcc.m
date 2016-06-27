@@ -1,4 +1,4 @@
-function ccc = mfcc(x, fs)
+function ccc = cal_mfcc(x, fs)
 %% 计算语音的MFCC
 % ccc: 返回的 mfcc 特征，帧数*24维
 % x: 输入语音
@@ -56,7 +56,6 @@ dtm = dtm/3;
 % 去除首尾两帧，因为这两帧的一阶差分参数为0
 ccc = [m dtm];
 ccc = ccc(3:size(m,1)-2, :);
-
 return 
 %% 作图
 % subplot(211)
@@ -66,4 +65,4 @@ return
 % ccc_1 = ccc(:,1);
 % plot(ccc);
 % title('MFCC');
-return
+% return
