@@ -1,23 +1,22 @@
 % endpoint_detection: 端点检测
 % author: irmo
 % date: 2016.6
-function [x1, x2] = endpoint_detect(f)
-% fs: 采样频率
-
-[x, fs] = audioread(f);
+function [x1, x2] = endpoint_detect(x, fs)
 
 % 播放音频
 % soundsc(x, fs);
+xxx = x;
 
-% 小波降噪
+%% 小波降噪
 [thr, sorh, keepapp] = ddencmp('den','wv',x(:));
 x = wdencmp('gbl',x,'coif5',5,thr,'s',keepapp);
-N = size(x);
+
+%% 语音归一化
 x = double(x);
 x = x/max(abs(x)); % 归一化
 
-% 确定帧长、帧移并切割
-FrameLen = 240;
+%% 确定帧长、帧移并切割
+FrameLen = 256;
 FrameInc = 80;
 tmp1  = enframe(x(1:end-1), FrameLen, FrameInc);
 tmp2  = enframe(x(2:end)  , FrameLen, FrameInc);
@@ -25,6 +24,7 @@ tmp2  = enframe(x(2:end)  , FrameLen, FrameInc);
 signs = (tmp1.*tmp2) < 0;
 diffs = (tmp1 -tmp2) > 0.02;
 
+%% 确定过零率阈值、能量阈值
 % zcr: 过零率
 % amp: 短时能量
 % ampH: 短时能量 高阈值
@@ -33,23 +33,24 @@ zcr   = sum(signs.*diffs, 2);
 % zcrH = 5;
 zcrL = 1;
 amp = sum(abs(enframe(filter([1 -0.9375],1,x), FrameLen, FrameInc)),2);
-amp1 = 2;
-amp2 = 1;
-ampH = min(amp1, max(amp)/4);
+amp1 = 1;
+amp2 = 2;
+ampH = max(amp1, max(amp)/4);
 ampL = min(amp2, max(amp)/8);
 
+%% 确定识别算法的常量
 % status: 状态
 % minlen: 最小检测长度
 % maxsilence: 最长允许静音长度
 % count: 有效语音长度
 % silence: 静音长度
-maxsilence = 40;
-minlen = 30;
+maxsilence = 50;
+minlen = 40;
 status = 0;
 count = 0;
 silence = 0;
 
-% 端点检测
+%% 端点检测
 x1 = 0;
 for n = 1 : length(zcr)
     switch status
@@ -89,10 +90,17 @@ for n = 1 : length(zcr)
             break;
     end
 end
-count = count - silence / 2;
+
+%% 计算终点
+count = count - round(silence / 2);
 x2 = x1 + count - 1;
+if x2 > length(zcr)
+    x2 = length(zcr);
+end
 return
 
+%% 画出波形图、过零率图、短时能量图
+% 
 % figure(1);
 % subplot(311);
 % plot(xxx,'b')
@@ -109,5 +117,4 @@ return
 % plot(amp);
 % title('短时能量');
 % xlabel('帧');
-% 
 % return 

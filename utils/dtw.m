@@ -1,5 +1,5 @@
 function dist = dtw(t,r)
-
+%% 使用DTW算法测距
 n=size(t,1);
 m=size(r,1);
 d=zeros(n,m);
