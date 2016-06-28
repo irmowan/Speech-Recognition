@@ -3,14 +3,8 @@ SpeechDataset/
 results/
 tests/
 mats/
+report/
 *.m~
+ignore.m
 
-*.log
-*.aux
-*.out
-*.toc
-*.gz
-*.blg
-*.bbl
-*.fls
 
