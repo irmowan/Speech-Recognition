@@ -1,5 +1,6 @@
 .DS_Store
-SpeechDataset/
+SpeechDataset/*
+!rename.sh
 results/
 tests/
 mats/
